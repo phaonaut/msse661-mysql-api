@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const queries = require('./queries/queries.js');
+const queries = require('./queries/authqueries.js');
 
 // Env variable or default to localhost
 const host = process.env.DB_HOST || 'localhost';

@@ -1,8 +1,10 @@
 const express = require('express');
+const cors = require('cors');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 
-const routes = require('./routes/routes');
+const authRoutes = require('./routes/authroutes');
+const userRoutes = require('./routes/userroutes');
 const errors = require('./middleware/errors');
 
 
@@ -17,6 +19,7 @@ app.use(logger(logLevel));
 // Middleware for parsing application/json
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 
 /**
@@ -29,8 +32,10 @@ app.use('/test', (req, res) => {
     res.send('Hello World');
 });
 
-// Handles routes for sketchboxx /api/user
-app.use('/api/user', routes);
+// Handles routes for sketchboxx
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+// app.use('/api/sketch', routes); //TODO add sketch routes
 
 // Handle 404 errors
 app.use(errors.NotFound);
@@ -39,5 +44,5 @@ app.use(errors.NotFound);
 app.use(errors.GeneralError);
 
 app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+  console.log(`Server started on port ${port}`);
 });
