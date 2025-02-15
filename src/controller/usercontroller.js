@@ -1,13 +1,12 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-const dbConnection = require('../db-config.js');
-const jwtConfig = require('../jwt-config.js');
-const userQueries = require('../queries/userqueries.js');
-
+import dbConnection from '../db-config.js';
+import jwtConfig from '../jwt-config.js';
+import userQueries from '../queries/userqueries.js';
 
 // ex. localhost:3000/api/user/me
-exports.getMe = (req, res) => {
+const getMe = (req, res) => {
     const token = req.header('auth-token');
 
     if(!token) {
@@ -29,8 +28,7 @@ exports.getMe = (req, res) => {
     });
 };
 
-
-exports.updateUser = (req, res) => {
+const updateUser = (req, res) => {
     console.log(req.user)
     dbConnection.query(
       userQueries.GET_USER_BY_ID_WITH_PASSWORD,
@@ -55,4 +53,9 @@ exports.updateUser = (req, res) => {
           }
         );
       });
-  };
+};
+
+export default {
+  getMe,
+  updateUser
+};

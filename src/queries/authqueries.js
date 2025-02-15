@@ -1,5 +1,4 @@
-
-exports.CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users (
+const CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL,
@@ -9,4 +8,6 @@ exports.CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users (
 )`;
 
 // Add user
-exports.INSERT_NEW_USER = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+const INSERT_NEW_USER = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+
+export default {CREATE_USERS_TABLE, INSERT_NEW_USER};

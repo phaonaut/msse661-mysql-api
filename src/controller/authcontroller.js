@@ -1,12 +1,12 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-const dbConnection = require('../db-config.js');
-const jwtConfig = require('../jwt-config.js');
-const authQueries = require('../queries/authqueries.js');
-const userQueries = require('../queries/userqueries.js');
+import dbConnection from '../db-config.js';
+import jwtConfig from '../jwt-config.js';
+import authQueries from '../queries/authqueries.js';
+import userQueries from '../queries/userqueries.js';
 
-exports.registerUser = (req, res) => {
+export const registerUser = (req, res) => {
   const passwordHash = bcrypt.hashSync(req.body.password);
 
   dbConnection.query(
@@ -15,7 +15,7 @@ exports.registerUser = (req, res) => {
     (err, results) => {
       if (err) {
         console.log(err);
-        res.status(500).send('Error creating new SketchBoxx account. Please try again later.');
+        res.status(500).send('Error creating new account. Please try again later.');
       }
 
       dbConnection.query(userQueries.GET_USER_BY_USERNAME, [req.body.username], (err, user) => {
@@ -31,7 +31,7 @@ exports.registerUser = (req, res) => {
   );
 };
 
-exports.login = (req, res) => {
+export const login = (req, res) => {
   dbConnection.query(
     userQueries.GET_USER_BY_USERNAME_WITH_PASSWORD,
     [req.body.username],

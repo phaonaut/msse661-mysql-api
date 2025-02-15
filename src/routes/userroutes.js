@@ -1,6 +1,6 @@
-const express = require('express');
-const usercontroller = require('../controller/usercontroller.js');
-const verifyToken = require('../middleware/verifytoken.js');
+import express from 'express';
+import usercontroller from '../controller/usercontroller.js';
+import verifyToken from '../middleware/verifytoken.js';
 
 const userRoutes = express.Router();
 
@@ -37,4 +37,4 @@ userRoutes.get('/me', usercontroller.getMe);
  */
 userRoutes.put('/me', verifyToken, usercontroller.updateUser);
 
-module.exports = userRoutes;
+export default userRoutes;
