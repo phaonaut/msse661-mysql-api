@@ -1,6 +1,6 @@
 import express from 'express';
 import usercontroller from '../controller/usercontroller.js';
-import verifyToken from '../middleware/verifytoken.js';
+import tokenVerificationCheck from '../middleware/auth.middleware.js';
 
 const userRoutes = express.Router();
 
@@ -11,7 +11,7 @@ const userRoutes = express.Router();
 /**
  * Routes for users
  */
-userRoutes.get('/me', usercontroller.getMe);
+userRoutes.get('/me', tokenVerificationCheck, usercontroller.getMe);
 
 /**
  * Swagger Documentation for PUT /api/user/me
@@ -35,6 +35,6 @@ userRoutes.get('/me', usercontroller.getMe);
  *   responses:
  *     200: { description: 'User updated successfully.' }
  */
-userRoutes.put('/me', verifyToken, usercontroller.updateUser);
+userRoutes.put('/me', tokenVerificationCheck, usercontroller.updateUser);
 
 export default userRoutes;

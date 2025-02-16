@@ -9,37 +9,29 @@ const host = process.env.DB_HOST || 'localhost';
 const user = process.env.DB_USER || 'root'; // Default user is root for local development
 
 // Env variable or default to root
-const password = process.env.DB_PASSWORD || 'root'; // Remove before pushing to production
+const password = process.env.DB_PASSWORD || ''; // Remove before pushing to production
 
 // Env variable or default to test-api-db
 const database = process.env.DB_DATABASE || 'test-api-db'; // Default database for local development
 
-console.log('host:', host, user, password, database);
-const dbConnection = mysql.createConnection({
-    host: host,
-    user: user,
-    password: password,
-    database: database
-});
+import query from './utils/query.js';
 
-dbConnection.connect(function(err) {
-    if (err) {
-        throw err;
-    }
-    console.log("Connected to db!");
+export default async (params) => {
+    return new Promise(async (resolve, reject) => {
+        const dbConnection = mysql.createConnection({
+            host: host,
+            user: user,
+            password: password,
+            database: database
+        });
+        const userTableCreated = await query(dbConnection, queries.CREATE_USERS_TABLE).catch((err) => {reject(err)});
+        const tasksTableCreated = await query(dbConnection, tasksQueries.CREATE_TASKS_TABLE).catch((err) => {reject(err)});
 
-    dbConnection.query(queries.CREATE_USERS_TABLE, function(err, result) {
-        if (err) {
-            throw err;
-        }
-        console.log("Users table created or already exists.");
+        if(!!userTableCreated && !!tasksTableCreated){
+            console.log("Users table created or already exists.");
+            resolve(dbConnection);
+        };
     });
-    dbConnection.query(tasksQueries.CREATE_TASKS_TABLE, function(err, result) {
-        if (err) {
-            throw err;
-        }
-        console.log("Tasks table created or already exists.");
-    });
-});
+};
 
-export default dbConnection;
+// export default dbConnection;

@@ -3,5 +3,5 @@ export function NotFound(err, req, res, next) {
 };
 
 export function GeneralError(err, req, res, next) {
-  res.status(err.status || 500).json({ error: err.message });
+  return res.status(err.status || 500).json({ error: err.message });
 }

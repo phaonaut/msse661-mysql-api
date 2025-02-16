@@ -1,68 +1,68 @@
 import dbConnection from '../db-config.js';
 import taskQueries from '../queries/tasksqueries.js';
+import query from '../utils/query.js';
 
-// Get all tasks
-const getAllTasks = (req, res) => {
-  dbConnection.query(taskQueries.GET_ALL_TASKS, (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json(result);
+
+const getAllTasks = async (req, res) => {
+  const getDbConnection = await dbConnection().catch(err => { throw err});
+  const tasks = await query(getDbConnection, taskQueries.GET_ALL_TASKS).catch(err => { 
+    return res.status(500).json({ error: err.message });
   });
+  res.status(200).json(tasks);
 };
 
-// Get task by ID
-const getTaskById = (req, res) => {
+const getTaskById = async (req, res) => {
   const id = req.params.id;
-  dbConnection.query(taskQueries.GET_TASK_BY_ID, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (result.length === 0) {
-      return res.status(404).json({ message: "Task not found." });
-    }
-    res.status(200).json(result[0]);
+  const getDbConnection = await dbConnection().catch(err => { throw err});
+
+  const task = await query(getDbConnection, taskQueries.GET_TASK_BY_ID, [id]).catch(err => { 
+    return res.status(500).json({ error: err.message });
+  });
+
+  if (task.length === 0) {
+    return res.status(404).json({ message: "Task not found." });
+  }
+  res.status(200).json(task[0]);
+};
+
+const createTask = async (req, res) => {
+  const { description, completed } = req.body;
+  const getDbConnection = await dbConnection().catch(err => { throw err});
+
+  const createTaskRequest = await query(getDbConnection, taskQueries.CREATE_TASK, [description, completed]).catch(err => { 
+    return res.status(500).json({ error: err.message });
+  });
+
+  return res.status(200).json({
+    message: "Task created successfully.",
+    description: description,
+    id: createTaskRequest.insertId,
   });
 };
 
-// Create a new task
-const createTask = (req, res) => {
+const updateTask = async (req, res) => {
   const { description, completed } = req.body;
-  dbConnection.query(taskQueries.CREATE_TASK, [description, completed], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(201).json({
-      message: "Task created successfully.",
-      id: result.insertId,
-    });
-  });
-};
 
-const updateTask = (req, res) => {
-  const { description, completed } = req.body;
-  const id = req.params.i;
-  dbConnection.query(
-    taskQueries.UPDATE_TASK,
-    [description, completed, id],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(200).json({ message: "Task updated successfully." });
-    }
-  );
-};
-
-// Delete a task
-const deleteTask = (req, res) => {
   const id = req.params.id;
-  dbConnection.query(taskQueries.DELETE_TASK, [id], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.status(200).json({ message: "Task deleted successfully." });
+
+  const getDbConnection = await dbConnection().catch(err => { throw err});
+
+  const updateTask = await query(getDbConnection, taskQueries.UPDATE_TASK, [description, completed, id]).catch(err => { 
+    return res.status(500).json({ error: err.message });
   });
+
+  res.status(200).json({ message: "Task updated successfully." });
+};
+
+const deleteTask = async (req, res) => {
+  const id = req.params.id;
+  const getDbConnection = await dbConnection().catch(err => { throw err});
+
+  const deleteTaskRequest = await query(getDbConnection, taskQueries.DELETE_TASK, [id]).catch(err => { 
+    return res.status(500).json({ error: err.message });
+  });
+
+  res.status(200).json({ message: "Task deleted successfully." });
 };
 
 export default { getAllTasks, getTaskById, createTask, updateTask, deleteTask };
