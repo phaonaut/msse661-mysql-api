@@ -47,8 +47,8 @@ export const login = async (req, res) => {
     if(!validPassword) {
       return res.status(400).send({ message: 'Invalid password.' });
     } else {
-      const accessToken = generateToken(loginUser[0].id, { expiresIn: 90000 });
-      const refreshToken = generateRefreshToken(loginUser[0].id, { expiresIn: 90000 });
+      const accessToken = generateToken(loginUser[0].user_id, { expiresIn: 90000 });
+      const refreshToken = generateRefreshToken(loginUser[0].user_id, { expiresIn: 90000 });
 
       refreshTokens.push(refreshToken);
       
@@ -98,8 +98,14 @@ export const token = async (req, res) => {
 };
 
 export const logOut = async (req, res) => {
-  const refreshToken = req.body.token;
-  refreshTokens = refreshTokens.filter((t) => t !== refreshToken);
+  if (!req.body.token) return res.status(401).send({ auth: false, message: 'No token provided.' });
 
+  const refreshToken = req.body.token;
+  const tokenIndex = refreshTokens.indexOf(refreshToken);
+  
+  if (tokenIndex > -1) {
+    refreshTokens.splice(tokenIndex, 1);
+  }
+  
   return res.send({ auth: false, message: 'User logged out successfully.' });
 };

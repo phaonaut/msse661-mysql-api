@@ -1,16 +1,18 @@
 import express from 'express';
 import tasksController from '../controller/taskscontroller.js';
+import tokenVerificationCheck from '../middleware/auth.middleware.js';
+
 
 const tasksRoutes = express.Router();
 
-tasksRoutes.get('/', tasksController.getAllTasks);
+tasksRoutes.get('/', tokenVerificationCheck, tasksController.getAllTasks);
 
-tasksRoutes.get('/:id', tasksController.getTaskById);
+tasksRoutes.get('/:id', tokenVerificationCheck, tasksController.getTaskById);
 
-tasksRoutes.post('/', tasksController.createTask);
+tasksRoutes.post('/', tokenVerificationCheck, tasksController.createTask);
 
-tasksRoutes.put('/:id', tasksController.updateTask);
+tasksRoutes.put('/:id', tokenVerificationCheck, tasksController.updateTask);
 
-tasksRoutes.delete('/:id', tasksController.deleteTask);
+tasksRoutes.delete('/:id', tokenVerificationCheck, tasksController.deleteTask);
 
 export default tasksRoutes;
